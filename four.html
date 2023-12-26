@@ -1,0 +1,104 @@
+4. 4. Currency Converter: Create a currency converter that can convert between different 
+currencies based on real-time exchange rates obtained from an API
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Currency Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #converter-container {
+      text-align: center;
+    }
+
+    input {
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="converter-container">
+    <label for="fromCurrency">From Currency:</label>
+    <select id="fromCurrency">
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+      <option value="GBP">GBP</option>
+      <!-- Add more currencies as needed -->
+    </select>
+
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" placeholder="Enter amount">
+
+    <label for="toCurrency">To Currency:</label>
+    <select id="toCurrency">
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+      <option value="GBP">GBP</option>
+      <!-- Add more currencies as needed -->
+    </select>
+
+    <button onclick="convertCurrency()">Convert</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function convertCurrency() {
+      const apiKey = 'YOUR_OPENEXCHANGERATES_API_KEY';
+      const fromCurrency = document.getElementById('fromCurrency').value;
+      const toCurrency = document.getElementById('toCurrency').value;
+      const amount = document.getElementById('amount').value;
+      const resultContainer = document.getElementById('result');
+
+      if (!amount) {
+        alert('Please enter an amount.');
+        return;
+      }
+
+      const apiUrl = `https://open.er-api.com/v6/latest/${fromCurrency}`;
+      
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (response.ok) {
+          const exchangeRate = data.rates[toCurrency];
+          const convertedAmount = (amount * exchangeRate).toFixed(2);
+
+          resultContainer.innerHTML = `<p>${amount} ${fromCurrency} is approximately ${convertedAmount} ${toCurrency}</p>`;
+        } else {
+          resultContainer.innerHTML = `<p>Error: ${data.error}</p>`;
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rates:', error);
+        resultContainer.innerHTML = '<p>Failed to fetch exchange rates. Please try again later.</p>';
+      }
+    }
+  </script>
+
+</body>
+</html>
